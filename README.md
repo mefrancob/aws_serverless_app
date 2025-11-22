@@ -24,7 +24,7 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
     - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
  
 
-## ✍️ Autores
+## Autores
 
 - **Melissa Franco Bernal** - [GitHub: tu-usuario](https://github.com/mefrancob)
 - **Manuel Tomás Rivera Portilla** - [GitHub: usuario-compañero](https://github.com/mariverapo)
