@@ -6,12 +6,12 @@ Esta aplicación permite a los usuarios registrarse, iniciar sesión de forma se
 El enfoque principal es demostrar la eficiencia, escalabilidad y rentabilidad de las arquitecturas serverless para construir aplicaciones web modernas.
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
-Stack Tecnológico
+### Stack Tecnológico
 Frontend: React.js
 Backend: Node.js (Funciones AWS Lambda)
 Infraestructura como Código (IaC): AWS SAM (Serverless Application Model)
 Plataforma Cloud: Amazon Web Services (AWS)
-Servicios de AWS Utilizados
+### Servicios de AWS Utilizados
 Hosting y Distribución:
 Amazon S3: Para el alojamiento de los archivos estáticos del frontend (React).
 Amazon CloudFront: Como CDN para una entrega de contenido rápida y segura (HTTPS).
