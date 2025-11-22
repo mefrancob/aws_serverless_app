@@ -22,3 +22,9 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
     - **Amazon Cognito:** Gestión completa del ciclo de vida de usuarios (registro, login, JWT).
 - **Base de Datos:**
     - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
+ 
+
+## ✍️ Autores
+
+- **Melissa Franco Bernal** - [GitHub: tu-usuario](https://github.com/mefrancob)
+- **Manuel Tomás Rivera Portilla** - [GitHub: usuario-compañero](https://github.com/mariverapo)
