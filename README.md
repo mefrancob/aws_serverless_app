@@ -7,18 +7,18 @@ El enfoque principal es demostrar la eficiencia, escalabilidad y rentabilidad de
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
 ### Stack Tecnológico
-Frontend: React.js
-Backend: Node.js (Funciones AWS Lambda)
-Infraestructura como Código (IaC): AWS SAM (Serverless Application Model)
-Plataforma Cloud: Amazon Web Services (AWS)
-### Servicios de AWS Utilizados
-Hosting y Distribución:
-Amazon S3: Para el alojamiento de los archivos estáticos del frontend (React).
-Amazon CloudFront: Como CDN para una entrega de contenido rápida y segura (HTTPS).
-Cómputo (Backend):
-AWS Lambda: Para ejecutar la lógica de negocio sin gestionar servidores.
-API y Autenticación:
-Amazon API Gateway: Para exponer las funciones Lambda como una API RESTful segura.
-Amazon Cognito: Para la gestión completa del ciclo de vida de los usuarios (registro, login, JWT).
-Base de Datos:
-Amazon DynamoDB: Como base de datos NoSQL, serverless y de alto rendimiento para almacenar las tareas.
+- **Frontend:** React.js
+- **Backend:** Node.js (Funciones AWS Lambda)
+- **Infraestructura como Código (IaC):** AWS SAM (Serverless Application Model)
+- **Plataforma Cloud:** Amazon Web Services (AWS)
+### Servicios Clave de AWS
+- **Hosting y Distribución:**
+    - **Amazon S3:** Alojamiento de los archivos estáticos del frontend.
+    - **Amazon CloudFront:** CDN para entrega de contenido rápida y segura (HTTPS).
+- **Cómputo (Backend):**
+    - **AWS Lambda:** Ejecución de la lógica de negocio sin gestionar servidores.
+- **API y Autenticación:**
+    - **Amazon API Gateway:** Exposición de las funciones Lambda como una API RESTful segura.
+    - **Amazon Cognito:** Gestión completa del ciclo de vida de usuarios (registro, login, JWT).
+- **Base de Datos:**
+    - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
