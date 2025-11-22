@@ -26,5 +26,5 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
 
 ## Autores
 
-- **Melissa Franco Bernal** - [GitHub: tu-usuario](https://github.com/mefrancob)
-- **Manuel Tomás Rivera Portilla** - [GitHub: usuario-compañero](https://github.com/mariverapo)
+- **Melissa Franco Bernal** - [GitHub: mefrancob](https://github.com/mefrancob)
+- **Manuel Tomás Rivera Portilla** - [GitHub: mariverapo](https://github.com/mariverapo)
