@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: "Backend Serverless con VocLabs"
+
+Resources:
+  TasksTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: TasksTable
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: taskId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: taskId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  CreateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      Role: arn:aws:iam::937256478358:role/lambda-run-role
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TasksTable
+
+Outputs:
+  LambdaFunctionArn:
+    Value: !GetAtt CreateTaskFunction.Arn
