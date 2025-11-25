@@ -28,7 +28,7 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
 - **Base de Datos:**
     - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
 ### Diagrama de arquitectura
-![Diagrama de Arquitectura de la Solución](docs/images/AWSCloudArchitecture.jpg)
+
 <p align="center">
   <img src="docs/images/AWSCloudArchitecture.jpg" alt="Diagrama de Arquitectura" width="80%">
 </p> 
