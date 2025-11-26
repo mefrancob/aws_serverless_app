@@ -20,17 +20,28 @@ Resources:
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-todo-app-manuel-70/ff2acd1171378313d634e27f7f37d6af
+      CodeUri: s3://artifacts-manolo-pro-v1/574b3974de7707a936732b07555c52a0
       Handler: app.lambda_handler
       Runtime: python3.12
-      Role: arn:aws:iam::937256478358:role/lambda-run-role
+      Policies:
+      - AmazonDynamoDBFullAccess
       Environment:
         Variables:
           TABLE_NAME:
             Ref: TasksTable
+      Events:
+        CreateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: post
 Outputs:
   LambdaFunctionArn:
     Value:
       Fn::GetAtt:
       - CreateTaskFunction
       - Arn
+  WebEndpoint:
+    Description: URL de la API Gateway
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/

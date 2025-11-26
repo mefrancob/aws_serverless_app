@@ -25,11 +25,21 @@ Resources:
       CodeUri: backend/
       Handler: app.lambda_handler
       Runtime: python3.12
-      Role: arn:aws:iam::937256478358:role/lambda-run-role
+      Policies:
+        - AmazonDynamoDBFullAccess
       Environment:
         Variables:
           TABLE_NAME: !Ref TasksTable
+      Events:
+        CreateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: post
 
 Outputs:
   LambdaFunctionArn:
     Value: !GetAtt CreateTaskFunction.Arn
+  WebEndpoint:
+    Description: "URL de la API Gateway"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
