@@ -1,6 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Backend Serverless con VocLabs
+Description: Backend Serverless Todo App
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: python3.12
+    Environment:
+      Variables:
+        TABLE_NAME:
+          Ref: TasksTable
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowOrigin: "'*'"
 Resources:
   TasksTable:
     Type: AWS::DynamoDB::Table
@@ -20,27 +33,30 @@ Resources:
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/574b3974de7707a936732b07555c52a0
+      CodeUri: s3://artifacts-manolo-pro-v1/9053eeafb1d500d2c22f2ecb7b71fcb0
       Handler: app.lambda_handler
-      Runtime: python3.12
       Policies:
       - AmazonDynamoDBFullAccess
-      Environment:
-        Variables:
-          TABLE_NAME:
-            Ref: TasksTable
       Events:
         CreateTaskApi:
           Type: Api
           Properties:
             Path: /tasks
             Method: post
+  GetTasksFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://artifacts-manolo-pro-v1/9053eeafb1d500d2c22f2ecb7b71fcb0
+      Handler: get_tasks.lambda_handler
+      Policies:
+      - AmazonDynamoDBReadOnlyAccess
+      Events:
+        GetTasksApi:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: get
 Outputs:
-  LambdaFunctionArn:
-    Value:
-      Fn::GetAtt:
-      - CreateTaskFunction
-      - Arn
   WebEndpoint:
     Description: URL de la API Gateway
     Value:
