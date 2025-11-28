@@ -15,6 +15,14 @@ Globals:
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
       AllowOrigin: "'*'"
 Resources:
+  ServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
   TasksTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -33,29 +41,79 @@ Resources:
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/9053eeafb1d500d2c22f2ecb7b71fcb0
+      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
       Handler: app.lambda_handler
       Policies:
       - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: TasksTable
       Events:
         CreateTaskApi:
           Type: Api
           Properties:
             Path: /tasks
             Method: post
+            RestApiId:
+              Ref: ServerlessRestApi
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/9053eeafb1d500d2c22f2ecb7b71fcb0
+      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
       Handler: get_tasks.lambda_handler
       Policies:
       - AmazonDynamoDBReadOnlyAccess
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: TasksTable
       Events:
         GetTasksApi:
           Type: Api
           Properties:
             Path: /tasks
             Method: get
+            RestApiId:
+              Ref: ServerlessRestApi
+  UpdateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      Handler: update_task.lambda_handler
+      Policies:
+      - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: TasksTable
+      Events:
+        UpdateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: put
+            RestApiId:
+              Ref: ServerlessRestApi
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      Handler: delete_task.lambda_handler
+      Policies:
+      - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: TasksTable
+      Events:
+        DeleteTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: delete
+            RestApiId:
+              Ref: ServerlessRestApi
 Outputs:
   WebEndpoint:
     Description: URL de la API Gateway

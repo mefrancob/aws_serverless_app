@@ -18,6 +18,16 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
+  # --- API EXPLÍCITA ---
+  ServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
   # --- BASE DE DATOS ---
   TasksTable:
     Type: AWS::DynamoDB::Table
@@ -35,7 +45,7 @@ Resources:
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
-  # --- FUNCIÓN 1: CREAR TAREA ---
+  # --- FUNCIÓN 1: CREAR ---
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -43,14 +53,18 @@ Resources:
       Handler: app.lambda_handler
       Policies:
         - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TasksTable
       Events:
         CreateTaskApi:
           Type: Api
           Properties:
             Path: /tasks
             Method: post
+            RestApiId: !Ref ServerlessRestApi
 
-  # --- FUNCIÓN 2: LEER TAREAS ---
+  # --- FUNCIÓN 2: LEER ---
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -58,12 +72,54 @@ Resources:
       Handler: get_tasks.lambda_handler
       Policies:
         - AmazonDynamoDBReadOnlyAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TasksTable
       Events:
         GetTasksApi:
           Type: Api
           Properties:
             Path: /tasks
             Method: get
+            RestApiId: !Ref ServerlessRestApi
+
+  # --- FUNCIÓN 3: ACTUALIZAR ---
+  UpdateTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: update_task.lambda_handler
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TasksTable
+      Events:
+        UpdateTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: put
+            RestApiId: !Ref ServerlessRestApi
+
+  # --- FUNCIÓN 4: BORRAR ---
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: delete_task.lambda_handler
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TasksTable
+      Events:
+        DeleteTaskApi:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: delete
+            RestApiId: !Ref ServerlessRestApi
 
 Outputs:
   WebEndpoint:
