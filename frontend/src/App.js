@@ -3,8 +3,43 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import './App.css';
 
-// CAMBIA ESTO POR TU URL REAL SI LA PERDISTE
+// TU URL DE AWS
 const API_URL = "https://oew2b6jdoh.execute-api.us-east-1.amazonaws.com/Prod";
+
+// --- CONFIGURACIÓN DEL FORMULARIO DE REGISTRO ---
+const formFields = {
+  signUp: {
+    username: {
+      order: 2, 
+      label: 'Correo Electrónico',
+      placeholder: 'tu@correo.com',
+      isRequired: true,
+    },
+    // Ocultamos el campo 'email' estándar porque usaremos 'username' como email
+    email: {
+      display: 'none' 
+    },
+    preferred_username: {
+      order: 1,
+      label: 'Nombre de usuario',
+      placeholder: 'Ej: Manolo',
+      isRequired: true,
+    },
+    password: {
+      order: 3,
+      label: 'Contraseña',
+      placeholder: 'Ingresa tu contraseña',
+      isRequired: true,
+    },
+    confirm_password: {
+      order: 4,
+      label: 'Confirmar Contraseña',
+      placeholder: 'Repite la contraseña',
+      isRequired: true,
+    },
+  },
+};
+// ------------------------------------------------
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -45,12 +80,14 @@ function App() {
   };
 
   return (
-    <Authenticator>
+    // AQUÍ PASAMOS LA CONFIGURACIÓN DE CAMPOS
+    <Authenticator formFields={formFields}>
       {({ signOut, user }) => (
         <div className="App">
           <header className="App-header">
             <div className="user-info">
-              <p>Hola, {user?.username}</p>
+              {/* AQUÍ LEEMOS EL ATRIBUTO PERSONALIZADO */}
+              <p>Hola, {user?.attributes?.preferred_username || user?.username}</p>
               <button onClick={signOut} style={{backgroundColor: '#ff4444'}}>Salir</button>
             </div>
             
