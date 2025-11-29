@@ -41,7 +41,7 @@ Resources:
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
       Handler: app.lambda_handler
       Policies:
       - AmazonDynamoDBFullAccess
@@ -60,7 +60,7 @@ Resources:
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
       Handler: get_tasks.lambda_handler
       Policies:
       - AmazonDynamoDBReadOnlyAccess
@@ -79,7 +79,7 @@ Resources:
   UpdateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
       Handler: update_task.lambda_handler
       Policies:
       - AmazonDynamoDBFullAccess
@@ -98,7 +98,7 @@ Resources:
   DeleteTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/b0c80d44213e429f165f1cbfc7e27bbf
+      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
       Handler: delete_task.lambda_handler
       Policies:
       - AmazonDynamoDBFullAccess

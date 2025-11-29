@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // TU URL DE AWS (Verifica que sea la correcta, terminada en /Prod)
-const API_URL = "https://vprr7fjur0.execute-api.us-east-1.amazonaws.com/Prod/";
+const API_URL = "https://oew2b6jdoh.execute-api.us-east-1.amazonaws.com/Prod";
 
 function App() {
   const [tasks, setTasks] = useState([]);

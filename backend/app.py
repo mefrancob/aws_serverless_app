@@ -4,40 +4,40 @@ import os
 import uuid
 from datetime import datetime
 
-# Conectar con DynamoDB
 dynamodb = boto3.resource('dynamodb')
-table_name = os.environ.get('TABLE_NAME')
+table_name = os.environ['TABLE_NAME']
 table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
-    # 1. Generar ID y Fecha
-    task_id = str(uuid.uuid4())
-    timestamp = datetime.utcnow().isoformat()
-
-    # 2. Datos a guardar
-    item = {
-        'userId': 'usuario_demo',
-        'taskId': task_id,
-        'description': 'Mi primera tarea automática',
-        'createdAt': timestamp,
-        'status': 'pending'
-    }
-
-    # 3. Intentar guardar en Base de Datos
     try:
-        table.put_item(Item=item)
+        body = json.loads(event['body'])
+        description = body.get('description')
         
+        task_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        
+        item = {
+            'userId': 'usuario_demo', # Hardcoded por ahora
+            'taskId': task_id,
+            'description': description,
+            'status': 'pending',
+            'createdAt': timestamp
+        }
+        
+        table.put_item(Item=item)
+
         return {
-            'statusCode': 201,
-            'body': json.dumps({
-                'message': 'Tarea creada con éxito',
-                'taskId': task_id
-            })
+            "statusCode": 201,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE"
+            },
+            "body": json.dumps({"message": "Tarea creada", "taskId": task_id})
         }
     except Exception as e:
-        # Aquí capturamos el error real si falla
-        print(f"Error: {str(e)}")
         return {
-            'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
+            "statusCode": 500,
+            "headers": { "Access-Control-Allow-Origin": "*" },
+            "body": json.dumps({"error": str(e)})
         }

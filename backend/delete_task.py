@@ -8,13 +8,13 @@ table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
     try:
-        # Obtenemos el ID de la URL (ej: /tasks/123)
+        # Obtener ID de la URL
         task_id = event['pathParameters']['taskId']
         
-        # Borramos el item
+        # Borrar de DynamoDB
         table.delete_item(
             Key={
-                'userId': 'usuario_demo', # Hardcoded por ahora
+                'userId': 'usuario_demo', 
                 'taskId': task_id
             }
         )
@@ -24,7 +24,7 @@ def lambda_handler(event, context):
             "headers": {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE,PUT"
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE"
             },
             "body": json.dumps({"message": "Tarea eliminada"})
         }

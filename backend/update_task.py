@@ -9,25 +9,18 @@ table = dynamodb.Table(table_name)
 def lambda_handler(event, context):
     try:
         task_id = event['pathParameters']['taskId']
-        
-        # Leemos el body para saber el nuevo estado
         body = json.loads(event['body'])
-        new_status = body.get('status') # Esperamos {"status": "completed"}
+        new_status = body.get('status')
 
-        # Actualizamos solo el campo 'status'
-        response = table.update_item(
+        # Actualizar en DynamoDB
+        table.update_item(
             Key={
                 'userId': 'usuario_demo',
                 'taskId': task_id
             },
             UpdateExpression="set #s = :s",
-            ExpressionAttributeNames={
-                '#s': 'status'
-            },
-            ExpressionAttributeValues={
-                ':s': new_status
-            },
-            ReturnValues="UPDATED_NEW"
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={':s': new_status}
         )
 
         return {
@@ -35,7 +28,7 @@ def lambda_handler(event, context):
             "headers": {
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
-                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE,PUT"
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE"
             },
             "body": json.dumps({"message": "Estado actualizado"})
         }
