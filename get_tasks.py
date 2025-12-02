@@ -1,8 +1,9 @@
+# backend/get_tasks.py CORREGIDO PARA SEGURIDAD
 import json
 import boto3
 import os
 from decimal import Decimal
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key # <--- IMPORTANTE
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -16,17 +17,10 @@ table = dynamodb.Table(table_name)
 
 def lambda_handler(event, context):
     try:
-        # Obtener usuario logueado
-        try:
-            user_id = event['requestContext']['authorizer']['claims']['sub']
-        except KeyError:
-            return {
-                "statusCode": 401,
-                "headers": { "Access-Control-Allow-Origin": "*" },
-                "body": json.dumps({"error": "Usuario no identificado"})
-            }
+        # OBTENER EL USUARIO REAL
+        user_id = event['requestContext']['authorizer']['claims']['sub']
 
-        # Consultar SOLO las tareas de este usuario
+        # USAR QUERY EN LUGAR DE SCAN (Mucho más eficiente y seguro)
         response = table.query(
             KeyConditionExpression=Key('userId').eq(user_id)
         )
@@ -42,9 +36,9 @@ def lambda_handler(event, context):
             "body": json.dumps(items, cls=DecimalEncoder)
         }
     except Exception as e:
-        print("ERROR:", str(e))
+        print(e)
         return {
             "statusCode": 500,
-            "headers": { "Access-Control-Allow-Origin": "*" },
+            "headers": {"Access-Control-Allow-Origin": "*"},
             "body": json.dumps({"error": str(e)})
         }

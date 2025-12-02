@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Backend Serverless Todo App
+Description: Todo App - Full Stack V2
 Globals:
   Function:
     Timeout: 10
@@ -9,12 +9,42 @@ Globals:
       Variables:
         TABLE_NAME:
           Ref: TasksTable
+        FORCE_UPDATE: '1'
   Api:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
       AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
       AllowOrigin: "'*'"
 Resources:
+  TodoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: TodoUserPool
+      AutoVerifiedAttributes:
+      - email
+      UsernameAttributes:
+      - email
+  TodoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: TodoAppClient
+      UserPoolId:
+        Ref: TodoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+      - ALLOW_USER_SRP_AUTH
+      - ALLOW_REFRESH_TOKEN_AUTH
+      - ALLOW_USER_PASSWORD_AUTH
+  ServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: MyCognitoAuthorizer
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn:
+              Fn::Sub: arn:aws:cognito-idp:us-east-1:${AWS::AccountId}:userpool/us-east-1_ce503fVpK
   TasksTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -30,52 +60,69 @@ Resources:
       - AttributeName: taskId
         KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-  TodoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: TodoUserPool
-      AutoVerifiedAttributes:
-      - email
-      UsernameAttributes:
-      - email
-  TodoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      ClientName: TodoUserPoolClient
-      UserPoolId:
-        Ref: TodoUserPool
-      ExplicitAuthFlows:
-      - ALLOW_USER_SRP_AUTH
-      - ALLOW_REFRESH_TOKEN_AUTH
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
-      Handler: app.lambda_handler
+      CodeUri: s3://artifacts-manolo-pro-v1/e735ce1da410a060440c922e0353d789
+      Handler: create_task.lambda_handler
       Policies:
       - AmazonDynamoDBFullAccess
       Events:
-        CreateTaskApi:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /tasks
             Method: post
+            RestApiId:
+              Ref: ServerlessRestApi
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://artifacts-manolo-pro-v1/cb3e69dd533069db03f0996c7b119416
+      CodeUri: s3://artifacts-manolo-pro-v1/e735ce1da410a060440c922e0353d789
       Handler: get_tasks.lambda_handler
       Policies:
       - AmazonDynamoDBReadOnlyAccess
       Events:
-        GetTasksApi:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /tasks
             Method: get
+            RestApiId:
+              Ref: ServerlessRestApi
+  CompleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://artifacts-manolo-pro-v1/e735ce1da410a060440c922e0353d789
+      Handler: complete_task.lambda_handler
+      Policies:
+      - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: put
+            RestApiId:
+              Ref: ServerlessRestApi
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://artifacts-manolo-pro-v1/e735ce1da410a060440c922e0353d789
+      Handler: delete_task.lambda_handler
+      Policies:
+      - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: delete
+            RestApiId:
+              Ref: ServerlessRestApi
 Outputs:
   WebEndpoint:
-    Description: URL de la API Gateway
+    Description: URL API
     Value:
       Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
   CognitoUserPoolId:
@@ -83,6 +130,6 @@ Outputs:
     Value:
       Ref: TodoUserPool
   CognitoClientId:
-    Description: ID del Cliente de la App
+    Description: ID del Cliente
     Value:
       Ref: TodoUserPoolClient

@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: "Backend Serverless Todo App"
+Description: "Todo App - Full Stack V2"
 
 Globals:
   Function:
@@ -9,6 +9,7 @@ Globals:
     Environment:
       Variables:
         TABLE_NAME: !Ref TasksTable
+        FORCE_UPDATE: "1"
   Api:
     Cors:
       AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
@@ -16,7 +17,38 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
-  # --- BASE DE DATOS ---
+  # --- 1. COGNITO (LA SEGURIDAD) ---
+  TodoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: TodoUserPool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+
+  TodoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: TodoAppClient
+      UserPoolId: !Ref TodoUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+
+  # --- 2. API GATEWAY ---
+  ServerlessRestApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        DefaultAuthorizer: MyCognitoAuthorizer
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn: !Sub arn:aws:cognito-idp:us-east-1:${AWS::AccountId}:userpool/us-east-1_ce503fVpK
+  # --- 3. BASE DE DATOS ---
   TasksTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -33,42 +65,22 @@ Resources:
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
-  # --- AUTH: COGNITO USER POOL (Base de datos de usuarios) ---
-  TodoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: TodoUserPool
-      AutoVerifiedAttributes:
-        - email
-      UsernameAttributes:
-        - email
-
-  # --- AUTH: COGNITO CLIENT (Para que React se conecte) ---
-  TodoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      ClientName: TodoUserPoolClient
-      UserPoolId: !Ref TodoUserPool
-      ExplicitAuthFlows:
-        - ALLOW_USER_SRP_AUTH
-        - ALLOW_REFRESH_TOKEN_AUTH
-
-  # --- FUNCIÓN: CREAR TAREA ---
+  # --- 4. FUNCIONES ---
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: backend/
-      Handler: app.lambda_handler
+      Handler: create_task.lambda_handler
       Policies:
         - AmazonDynamoDBFullAccess
       Events:
-        CreateTaskApi:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /tasks
             Method: post
+            RestApiId: !Ref ServerlessRestApi
 
-  # --- FUNCIÓN: LEER TAREAS ---
   GetTasksFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -77,19 +89,51 @@ Resources:
       Policies:
         - AmazonDynamoDBReadOnlyAccess
       Events:
-        GetTasksApi:
+        ApiEvent:
           Type: Api
           Properties:
             Path: /tasks
             Method: get
+            RestApiId: !Ref ServerlessRestApi
 
+  CompleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: complete_task.lambda_handler
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: put
+            RestApiId: !Ref ServerlessRestApi
+
+  DeleteTaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: delete_task.lambda_handler
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /tasks/{taskId}
+            Method: delete
+            RestApiId: !Ref ServerlessRestApi
+
+# --- 5. OUTPUTS (LO QUE NECESITAS COPIAR) ---
 Outputs:
   WebEndpoint:
-    Description: "URL de la API Gateway"
+    Description: "URL API"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   CognitoUserPoolId:
     Description: "ID del User Pool"
     Value: !Ref TodoUserPool
   CognitoClientId:
-    Description: "ID del Cliente de la App"
+    Description: "ID del Cliente"
     Value: !Ref TodoUserPoolClient
