@@ -9,7 +9,6 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* --- Cabecera y Usuario --- */
 .user-info {
   position: absolute;
   top: 15px;
@@ -26,41 +25,62 @@
   font-size: 12px;
   border-radius: 4px;
 }
-
 .btn-logout:hover { background-color: #cc0000; }
 
-/* --- Formulario --- */
-.task-form { margin: 40px 0 20px 0; }
+/* --- FORMULARIO NUEVO --- */
+.task-form {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column; /* Apila inputs y botón */
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
 
 input {
   padding: 12px;
-  font-size: 16px;
   border-radius: 6px;
   border: none;
-  width: 300px;
   background-color: #eee;
   outline: none;
+  width: 100%;
+  box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
 }
+
+/* Estilos diferenciados para título y descripción */
+.input-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.input-details {
+  font-size: 14px;
+  font-family: inherit;}
 
 input:focus { background-color: #fff; box-shadow: 0 0 5px #61dafb; }
 
-button {
-  padding: 12px 24px;
-  font-size: 16px;
+.btn-add {
+  width: 100%; /* Botón ancho completo debajo de los inputs */
+  padding: 10px;
   background-color: #61dafb;
   color: #282c34;
+  font-weight: bold;
   border: none;
   border-radius: 6px;
-  margin-left: 10px;
   cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s;
+  margin-top: 5px;
 }
+.btn-add:hover { opacity: 0.9; }
 
-button:hover { opacity: 0.9; transform: scale(1.02); }
-button:disabled { background-color: #555; cursor: not-allowed; }
-
-/* --- Lista de Tareas --- */
+/* --- LISTA DE TAREAS --- */
 .task-list {
   width: 90%;
   max-width: 600px;
@@ -74,46 +94,50 @@ button:disabled { background-color: #555; cursor: not-allowed; }
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  transition: transform 0.2s;
-}
-
-.task-card:hover { transform: translateY(-2px); }
-
-/* Estilo para el texto de la tarea (span) */
-.task-card span {
-  flex-grow: 1;
+  align-items: flex-start; /* Alinea arriba por si la descripción es larga */
   text-align: left;
-  font-size: 18px;
-  margin-right: 15px;
-  word-break: break-word; /* Evita que textos largos rompan el diseño */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* Contenedor de botones de acción */
+.task-content {
+  flex-grow: 1;
+  margin-right: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  word-break: break-word;
+  color: #fff;
+}
+
+.task-desc {
+  font-size: 14px;
+  color: #bbb; /* Gris claro para diferenciar */
+  margin: 5px 0 0 0;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
 .actions {
   display: flex;
   gap: 8px;
-  min-width: 80px; /* Asegura espacio para los botones */
-  justify-content: flex-end;
+  padding-top: 2px; /* Alineación fina */
 }
 
-/* Botones pequeños (iconos) */
 .btn-icon {
   background: transparent;
   border: 1px solid #555;
-  padding: 5px 0;
-  width: 35px;
-  height: 35px;
-  margin: 0;
-  font-size: 18px;
-  border-radius: 50%; /* Botones redondos */
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 16px;
+  cursor: pointer;
 }
-
-.btn-icon:hover {
-  background-color: #555;
-  border-color: #777;
-}
+.btn-icon:hover { background-color: #555; }

@@ -5,7 +5,6 @@ import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import './App.css';
 
-// Configuración de AWS
 Amplify.configure({
   Auth: {
     Cognito: {
@@ -17,14 +16,13 @@ Amplify.configure({
 
 const API_URL = "https://cwaai6k6pi.execute-api.us-east-1.amazonaws.com/Prod";
 
-// Configuración del Formulario de Registro
 const formFields = {
   signUp: {
     email: { order: 2, isRequired: true },
     preferred_username: {
       order: 1,
       label: 'Nombre de usuario',
-      placeholder: 'Ej: Manuel',
+      placeholder: 'Ej: Manolo',
       isRequired: true,
     },
     password: { order: 3 },
@@ -32,12 +30,14 @@ const formFields = {
   },
 };
 
-// --- COMPONENTE INTERNO: Solo existe cuando el usuario ya entró ---
 function Home({ user, signOut }) {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
   const [loading, setLoading] = useState(false);
-  const [displayName, setDisplayName] = useState(""); // Nombre para mostrar
+  const [displayName, setDisplayName] = useState("");
+
+  // ESTADOS NUEVOS: Separamos Título y Detalles
+  const [title, setTitle] = useState("");
+  const [details, setDetails] = useState("");
 
   const getToken = async () => {
     try {
@@ -71,17 +71,25 @@ function Home({ user, signOut }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newTask.trim()) return;
+    if (!title.trim()) return;
     setLoading(true);
     try {
       const headers = await getAuthHeaders();
+      // ENVIAMOS AMBOS CAMPOS
+      // Nota: Mantenemos 'description' como el título para compatibilidad con tus tareas viejas
+      const payload = {
+        description: title, 
+        details: details // Nuevo campo
+      };
+
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({ description: newTask }),
+        body: JSON.stringify(payload),
       });
       if (response.ok) {
-        setNewTask("");
+        setTitle("");
+        setDetails(""); // Limpiamos ambos campos
         await fetchTasks();
       }
     } catch (error) { console.error(error); }
@@ -112,54 +120,75 @@ function Home({ user, signOut }) {
     } catch (error) { console.error(error); }
   };
 
-  // Este useEffect AHORA SÍ correrá justo después del login
   useEffect(() => {
     const loadData = async () => {
-      // 1. Cargar Nombre de Usuario
       try {
         const attributes = await fetchUserAttributes();
-        // Prioridad: atributo 'preferred_username', si no, el del objeto user
         const name = attributes.preferred_username || user?.signInDetails?.loginId;
         setDisplayName(name);
       } catch (e) { console.log(e); }
-
-      // 2. Cargar Tareas
       fetchTasks();
     };
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Se ejecuta al "montar" este componente Home
+  }, []);
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="user-info">
-          {/* Aquí mostramos el estado displayName que acabamos de cargar */}
           <p>Hola, {displayName || "..."}</p> 
           <button onClick={signOut} className="btn-logout">Cerrar Sesión</button>
         </div>
         <h1>Lista de Tareas</h1>
         
+        {/* FORMULARIO ACTUALIZADO: AHORA TIENE DOS INPUTS */}
         <form onSubmit={handleSubmit} className="task-form">
-          <input
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Nueva tarea..."
-            disabled={loading}
-          />
-          <button type="submit" disabled={loading}>{loading ? '...' : 'Agregar'}</button>
+          <div className="input-group">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Título de la tarea..."
+              disabled={loading}
+              className="input-title"
+            />
+            <input
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              placeholder="Descripción opcional (detalles...)"
+              disabled={loading}
+              className="input-details"
+            />
+          </div>
+          <button type="submit" disabled={loading} className="btn-add">
+            {loading ? '...' : 'Agregar'}
+          </button>
         </form>
 
         <div className="task-list">
           {tasks.length === 0 && <p style={{fontSize: '0.9rem', opacity: 0.7}}>No hay tareas pendientes.</p>}
           {tasks.map((task) => (
             <div key={task.taskId} className="task-card">
-              <span style={{
-                textDecoration: task.status === 'completed' ? 'line-through' : 'none',
-                opacity: task.status === 'completed' ? 0.5 : 1
-              }}>
-                {task.description}
-              </span>
+              <div className="task-content">
+                {/* TÍTULO */}
+                <span className="task-title" style={{
+                  textDecoration: task.status === 'completed' ? 'line-through' : 'none',
+                  opacity: task.status === 'completed' ? 0.5 : 1
+                }}>
+                  {task.description}
+                </span>
+                
+                {/* DESCRIPCIÓN (Solo se muestra si existe) */}
+                {task.details && (
+                  <p className="task-desc" style={{
+                    textDecoration: task.status === 'completed' ? 'line-through' : 'none',
+                    opacity: task.status === 'completed' ? 0.5 : 1
+                  }}>
+                    {task.details}
+                  </p>
+                )}
+              </div>
+              
               <div className="actions">
                 <button onClick={() => completeTask(task.taskId)} className="btn-icon">✅</button>
                 <button onClick={() => deleteTask(task.taskId)} className="btn-icon">🗑️</button>
@@ -172,13 +201,10 @@ function Home({ user, signOut }) {
   );
 }
 
-// --- COMPONENTE PRINCIPAL ---
 function App() {
   return (
     <Authenticator loginMechanisms={['email']} formFields={formFields}>
       {({ signOut, user }) => (
-        // Renderizamos 'Home' pasando el usuario y la función salir.
-        // Al montarse 'Home' por primera vez, disparará su useEffect y cargará el nombre correcto.
         <Home user={user} signOut={signOut} />
       )}
     </Authenticator>
