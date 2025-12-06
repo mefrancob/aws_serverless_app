@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         timestamp = datetime.now().isoformat()
         
         item = {
-            'userId': 'usuario_demo', # Hardcoded por ahora
+            'userId': 'user_id', # Hardcoded por ahora
             'taskId': task_id,
             'description': description,
             'status': 'pending',

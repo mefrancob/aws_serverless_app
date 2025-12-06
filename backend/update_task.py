@@ -15,7 +15,7 @@ def lambda_handler(event, context):
         # Actualizar en DynamoDB
         table.update_item(
             Key={
-                'userId': 'usuario_demo',
+                'userId': 'user_id',
                 'taskId': task_id
             },
             UpdateExpression="set #s = :s",
