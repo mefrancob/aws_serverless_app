@@ -141,3 +141,68 @@ input:focus { background-color: #fff; box-shadow: 0 0 5px #61dafb; }
   cursor: pointer;
 }
 .btn-icon:hover { background-color: #555; }
+
+/* --- BARRA DE BÚSQUEDA (UBICACIÓN IZQUIERDA) --- */
+.search-container {
+  position: absolute; /* Lo sacamos del flujo central */
+  top: 20px;          /* Misma altura que el usuario */
+  left: 20px;         /* Pegado a la izquierda */
+  width: 220px;       /* Tamaño más compacto */
+  z-index: 100;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%); /* Centrado vertical exacto */
+  font-size: 16px;
+  pointer-events: none; /* Para que el click pase al input */
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 10px 8px 35px; /* Ajuste para el icono */
+  border-radius: 20px;
+  border: 1px solid #555;
+  background-color: #333842;
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.search-input:focus {
+  background-color: #404652;
+  border-color: #61dafb;
+  width: 280px; /* Efecto cool: se estira al escribir */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* --- RESPONSIVE (CELULAR) --- */
+/* Cuando la pantalla sea pequeña, bajamos el buscador para que no estorbe */
+@media (max-width: 768px) {
+  .search-container {
+    position: relative; /* Vuelve al flujo normal */
+    top: 0;
+    left: 0;
+    width: 90%;
+    margin: 10px 0 20px 0; /* Un poco de margen */
+  }
+  
+  .search-input:focus {
+    width: 100%; /* En celular no se estira, ocupa todo el ancho */
+  }
+  
+  .user-info {
+    position: relative; /* Ajustamos usuario también en móvil */
+    top: 0;
+    right: 0;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+
+  .App-header {
+    padding-top: 20px; /* Espacio extra arriba */
+  }
+}

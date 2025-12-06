@@ -34,10 +34,13 @@ function Home({ user, signOut }) {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
-
-  // ESTADOS NUEVOS: Separamos Título y Detalles
+  
+  // ESTADOS DEL FORMULARIO
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
+
+  // NUEVO ESTADO: BÚSQUEDA
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getToken = async () => {
     try {
@@ -75,13 +78,7 @@ function Home({ user, signOut }) {
     setLoading(true);
     try {
       const headers = await getAuthHeaders();
-      // ENVIAMOS AMBOS CAMPOS
-      // Nota: Mantenemos 'description' como el título para compatibilidad con tus tareas viejas
-      const payload = {
-        description: title, 
-        details: details // Nuevo campo
-      };
-
+      const payload = { description: title, details: details };
       const response = await fetch(`${API_URL}/tasks`, {
         method: 'POST',
         headers: headers,
@@ -89,7 +86,7 @@ function Home({ user, signOut }) {
       });
       if (response.ok) {
         setTitle("");
-        setDetails(""); // Limpiamos ambos campos
+        setDetails("");
         await fetchTasks();
       }
     } catch (error) { console.error(error); }
@@ -130,8 +127,16 @@ function Home({ user, signOut }) {
       fetchTasks();
     };
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // LÓGICA DE FILTRADO (Buscador)
+  const filteredTasks = tasks.filter((task) => {
+    const term = searchTerm.toLowerCase();
+    const matchTitle = task.description.toLowerCase().includes(term);
+    const matchDetails = task.details ? task.details.toLowerCase().includes(term) : false;
+    return matchTitle || matchDetails;
+  });
 
   return (
     <div className="App">
@@ -142,7 +147,6 @@ function Home({ user, signOut }) {
         </div>
         <h1>Lista de Tareas</h1>
         
-        {/* FORMULARIO ACTUALIZADO: AHORA TIENE DOS INPUTS */}
         <form onSubmit={handleSubmit} className="task-form">
           <div className="input-group">
             <input
@@ -165,12 +169,33 @@ function Home({ user, signOut }) {
           </button>
         </form>
 
+        {/* BARRA DE BÚSQUEDA NUEVA */}
+        {tasks.length > 0 && (
+          <div className="search-container">
+            <span className="search-icon">🔍</span>
+            <input 
+              type="text" 
+              placeholder="Buscar tarea..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+        )}
+
         <div className="task-list">
-          {tasks.length === 0 && <p style={{fontSize: '0.9rem', opacity: 0.7}}>No hay tareas pendientes.</p>}
-          {tasks.map((task) => (
+          {filteredTasks.length === 0 && tasks.length > 0 && (
+             <p style={{fontSize: '0.9rem', opacity: 0.7}}>No se encontraron resultados.</p>
+          )}
+          
+          {tasks.length === 0 && (
+             <p style={{fontSize: '0.9rem', opacity: 0.7}}>No hay tareas pendientes.</p>
+          )}
+
+          {/* Usamos filteredTasks en vez de tasks */}
+          {filteredTasks.map((task) => (
             <div key={task.taskId} className="task-card">
               <div className="task-content">
-                {/* TÍTULO */}
                 <span className="task-title" style={{
                   textDecoration: task.status === 'completed' ? 'line-through' : 'none',
                   opacity: task.status === 'completed' ? 0.5 : 1
@@ -178,7 +203,6 @@ function Home({ user, signOut }) {
                   {task.description}
                 </span>
                 
-                {/* DESCRIPCIÓN (Solo se muestra si existe) */}
                 {task.details && (
                   <p className="task-desc" style={{
                     textDecoration: task.status === 'completed' ? 'line-through' : 'none',
