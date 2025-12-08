@@ -7,6 +7,7 @@
   align-items: center;
   color: white;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden; /* Evita scroll horizontal indeseado */
 }
 
 .user-info {
@@ -27,48 +28,117 @@
 }
 .btn-logout:hover { background-color: #cc0000; }
 
-/* --- FORMULARIO NUEVO --- */
-.task-form {
-  margin: 30px 0;
+/* --- BUSCADOR --- */
+.search-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 220px;
+  z-index: 100;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 10px 8px 35px;
+  border-radius: 20px;
+  border: 1px solid #555;
+  background-color: #333842;
+  color: white;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.search-input:focus {
+  background-color: #404652;
+  border-color: #61dafb;
+  width: 280px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* --- FORMULARIO --- */
+/* Asegúrate de agregar o verificar esto al principio para la cabecera */
+.App-header {
+  width: 100%;
   display: flex;
-  flex-direction: column; /* Apila inputs y botón */
+  flex-direction: column;
+  align-items: center; /* Esto fuerza a que todo lo de adentro se centre */
+}
+
+.task-form {
+  margin: 30px auto; /* <--- EL CAMBIO CLAVE: 'auto' centra el bloque horizontalmente */
+  display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
   width: 100%;
   max-width: 400px;
 }
 
+/* --- INPUTS DE FECHA Y PRIORIDAD --- */
+
+/* Aseguramos que el grupo tenga espacio entre todos los elementos */
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px; /* Aumentamos un poco el espacio general para que respiren */
   width: 100%;
 }
 
-input {
+.input-priority {
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  /* Margen de seguridad por si el gap falla */
+  margin-top: 5px; 
+}
+
+.input-date {
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #eee;
+  font-family: inherit;
+  cursor: pointer;
+  color: #555;
+  /* Margen de seguridad por si el gap falla */
+  margin-top: 5px;
+}
+
+/* El resto de inputs también se beneficiarán del gap del .input-group */
+
+input, select {
   padding: 12px;
   border-radius: 6px;
   border: none;
   background-color: #eee;
   outline: none;
   width: 100%;
-  box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
+  box-sizing: border-box;
 }
 
-/* Estilos diferenciados para título y descripción */
-.input-title {
-  font-size: 16px;
-  font-weight: bold;
+.input-title { font-size: 16px; font-weight: bold; }
+.input-details { font-size: 14px; font-family: inherit; }
+
+.input-priority {
+  cursor: pointer;
+  background-color: #eee;
 }
 
-.input-details {
-  font-size: 14px;
-  font-family: inherit;}
-
-input:focus { background-color: #fff; box-shadow: 0 0 5px #61dafb; }
+input:focus, select:focus { background-color: #fff; box-shadow: 0 0 5px #61dafb; }
 
 .btn-add {
-  width: 100%; /* Botón ancho completo debajo de los inputs */
+  width: 100%;
   padding: 10px;
   background-color: #61dafb;
   color: #282c34;
@@ -80,129 +150,130 @@ input:focus { background-color: #fff; box-shadow: 0 0 5px #61dafb; }
 }
 .btn-add:hover { opacity: 0.9; }
 
-/* --- LISTA DE TAREAS --- */
-.task-list {
-  width: 90%;
-  max-width: 600px;
+/* --- TABLERO KANBAN (3 COLUMNAS) --- */
+.kanban-board {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Espacio entre columnas */
+  width: 95%;
+  max-width: 1200px;
   padding-bottom: 50px;
+  align-items: flex-start; /* Para que las columnas no se estiren a la altura de la más alta */
 }
 
+.kanban-column {
+  flex: 1; /* Las 3 columnas ocupan el mismo ancho */
+  background-color: #333842;
+  border-radius: 12px;
+  padding: 15px;
+  min-height: 200px; /* Altura mínima visual */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.kanban-column h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #555;
+  padding-bottom: 10px;
+  font-size: 18px;
+}
+
+/* Diferenciación visual sutil de las columnas */
+.col-high { border-top: 4px solid #ff4444; }
+.col-normal { border-top: 4px solid #ffbb33; }
+.col-low { border-top: 4px solid #00C851; }
+
+.column-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty-msg {
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+  margin-top: 20px;
+}
+
+/* --- TARJETAS --- */
 .task-card {
-  background-color: #3a3f4b;
-  margin: 10px 0;
-  padding: 15px 20px;
-  border-radius: 10px;
+  background-color: #404652; /* Un poco más claro que el fondo de la columna */
+  padding: 12px 15px;
+  border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Alinea arriba por si la descripción es larga */
+  align-items: flex-start;
   text-align: left;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
 }
+
+.task-card:hover { transform: translateY(-2px); }
+
+/* Borde izquierdo según prioridad */
+.priority-alta { border-left: 4px solid #ff4444; }
+.priority-normal { border-left: 4px solid #ffbb33; }
+.priority-baja { border-left: 4px solid #00C851; }
 
 .task-content {
   flex-grow: 1;
-  margin-right: 15px;
-  display: flex;
-  flex-direction: column;
+  margin-right: 10px;
 }
 
 .task-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
-  word-break: break-word;
   color: #fff;
+  display: block;
 }
 
 .task-desc {
-  font-size: 14px;
-  color: #bbb; /* Gris claro para diferenciar */
-  margin: 5px 0 0 0;
-  word-break: break-word;
-  line-height: 1.4;
+  font-size: 13px;
+  color: #ccc;
+  margin: 4px 0 0 0;
+  line-height: 1.3;
 }
 
 .actions {
   display: flex;
-  gap: 8px;
-  padding-top: 2px; /* Alineación fina */
+  gap: 5px;
 }
 
 .btn-icon {
   background: transparent;
-  border: 1px solid #555;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  border: 1px solid #666;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
+  color: white;
 }
 .btn-icon:hover { background-color: #555; }
 
-/* --- BARRA DE BÚSQUEDA (UBICACIÓN IZQUIERDA) --- */
-.search-container {
-  position: absolute; /* Lo sacamos del flujo central */
-  top: 20px;          /* Misma altura que el usuario */
-  left: 20px;         /* Pegado a la izquierda */
-  width: 220px;       /* Tamaño más compacto */
-  z-index: 100;
-}
-
-.search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%); /* Centrado vertical exacto */
-  font-size: 16px;
-  pointer-events: none; /* Para que el click pase al input */
-}
-
-.search-input {
-  width: 100%;
-  padding: 8px 10px 8px 35px; /* Ajuste para el icono */
-  border-radius: 20px;
-  border: 1px solid #555;
-  background-color: #333842;
-  color: white;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.search-input:focus {
-  background-color: #404652;
-  border-color: #61dafb;
-  width: 280px; /* Efecto cool: se estira al escribir */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
 /* --- RESPONSIVE (CELULAR) --- */
-/* Cuando la pantalla sea pequeña, bajamos el buscador para que no estorbe */
 @media (max-width: 768px) {
-  .search-container {
-    position: relative; /* Vuelve al flujo normal */
-    top: 0;
-    left: 0;
-    width: 90%;
-    margin: 10px 0 20px 0; /* Un poco de margen */
+  .kanban-board {
+    flex-direction: column; /* En celular se apilan una abajo de otra */
+    align-items: stretch;
   }
   
-  .search-input:focus {
-    width: 100%; /* En celular no se estira, ocupa todo el ancho */
+  .search-container {
+    position: relative;
+    top: 0; left: 0;
+    width: 90%;
+    margin: 10px 0;
   }
+  
+  .search-input:focus { width: 100%; }
   
   .user-info {
-    position: relative; /* Ajustamos usuario también en móvil */
-    top: 0;
-    right: 0;
+    position: relative;
+    top: 0; right: 0;
     margin-bottom: 20px;
     justify-content: center;
-  }
-
-  .App-header {
-    padding-top: 20px; /* Espacio extra arriba */
   }
 }
