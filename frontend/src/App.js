@@ -5,6 +5,7 @@ import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import './App.css';
 
+// Configuración de AWS
 Amplify.configure({
   Auth: {
     Cognito: {
@@ -19,7 +20,7 @@ const API_URL = "https://cwaai6k6pi.execute-api.us-east-1.amazonaws.com/Prod";
 const formFields = {
   signUp: {
     email: { order: 2, isRequired: true },
-    preferred_username: { order: 1, label: 'Nombre de usuario', placeholder: 'Ej: Manolo', isRequired: true },
+    preferred_username: { order: 1, label: 'Nombre de usuario', placeholder: 'Ej: Manuel', isRequired: true },
     password: { order: 3 },
     confirm_password: { order: 4 }
   },
@@ -34,8 +35,7 @@ function Home({ user, signOut }) {
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
   const [priority, setPriority] = useState("normal");
-  const [dueDate, setDueDate] = useState(""); // NUEVO ESTADO FECHA
-
+  const [dueDate, setDueDate] = useState(""); 
   const [searchTerm, setSearchTerm] = useState("");
 
   const getToken = async () => {
@@ -78,7 +78,7 @@ function Home({ user, signOut }) {
         description: title, 
         details: details, 
         priority: priority,
-        dueDate: dueDate // ENVIAMOS LA FECHA
+        dueDate: dueDate
       };
       
       const response = await fetch(`${API_URL}/tasks`, {
@@ -90,7 +90,7 @@ function Home({ user, signOut }) {
         setTitle("");
         setDetails("");
         setPriority("normal");
-        setDueDate(""); // Limpiar fecha
+        setDueDate("");
         await fetchTasks();
       }
     } catch (error) { console.error(error); }
@@ -134,11 +134,23 @@ function Home({ user, signOut }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Helper para verificar si está vencida
-  const isOverdue = (dateString) => {
-    if (!dateString) return false;
-    const today = new Date().toISOString().split('T')[0]; // Fecha hoy formato YYYY-MM-DD
-    return dateString < today;
+  // --- LÓGICA DE FECHAS MEJORADA ---
+  const getDateStatus = (dateString) => {
+    if (!dateString) return { color: '#888', text: null }; 
+    
+    const today = new Date();
+    const offset = today.getTimezoneOffset() * 60000;
+    const localToday = new Date(today.getTime() - offset).toISOString().split('T')[0];
+
+    const tomorrowDate = new Date(today.getTime() - offset);
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+    const localTomorrow = tomorrowDate.toISOString().split('T')[0];
+
+    if (dateString < localToday) return { color: '#ff4444', text: '(Vencida)' }; 
+    if (dateString === localToday) return { color: '#ffbb33', text: '(Vence Hoy)' }; 
+    if (dateString === localTomorrow) return { color: '#ffbb33', text: '(Vence Mañana)' }; 
+
+    return { color: '#888', text: null };
   };
 
   const filteredTasks = tasks.filter((task) => {
@@ -171,11 +183,18 @@ function Home({ user, signOut }) {
           </p>
         )}
 
-        {/* MOSTRAR FECHA DE VENCIMIENTO */}
+        {/* FECHA CON ALERTA INTELIGENTE */}
         {task.dueDate && (
-          <div className="task-date" style={{ color: isOverdue(task.dueDate) && task.status !== 'completed' ? '#ff4444' : '#888' }}>
+          <div className="task-date" style={{ 
+            color: task.status === 'completed' ? '#888' : getDateStatus(task.dueDate).color 
+          }}>
             📅 {task.dueDate} 
-            {isOverdue(task.dueDate) && task.status !== 'completed' && <span style={{fontWeight:'bold', marginLeft:'5px'}}> (Vencida)</span>}
+            
+            {task.status !== 'completed' && getDateStatus(task.dueDate).text && (
+              <span style={{fontWeight:'bold', marginLeft:'5px'}}>
+                 {getDateStatus(task.dueDate).text}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -209,8 +228,7 @@ function Home({ user, signOut }) {
 
         <h1>Lista de Tareas</h1>
         
-<form onSubmit={handleSubmit} className="task-form">
-          {/* El input-group se encarga de dar espacio (gap) automáticamente a sus hijos */}
+        <form onSubmit={handleSubmit} className="task-form">
           <div className="input-group">
             <input
               value={title}
@@ -227,7 +245,7 @@ function Home({ user, signOut }) {
               className="input-details"
             />
             
-            {/* FECHA: Primer hijo directo (sin divs extra) */}
+            {/* FECHA Y LUEGO PRIORIDAD (Apilados) */}
             <input 
               type="date"
               value={dueDate}
@@ -236,7 +254,6 @@ function Home({ user, signOut }) {
               disabled={loading}
             />
 
-            {/* PRIORIDAD: Segundo hijo directo (sin divs extra) */}
             <select 
               value={priority} 
               onChange={(e) => setPriority(e.target.value)}
@@ -254,12 +271,13 @@ function Home({ user, signOut }) {
             {loading ? '...' : 'Agregar'}
           </button>
         </form>
+
         <div className="kanban-board">
           <div className="kanban-column col-high">
             <h3>🔴 Prioridad Alta ({highTasks.length})</h3>
             <div className="column-content">
               {highTasks.map(renderCard)}
-              {highTasks.length === 0 && <p className="empty-msg">Nada urgente </p>}
+              {highTasks.length === 0 && <p className="empty-msg">Nada urgente 🙌</p>}
             </div>
           </div>
 
