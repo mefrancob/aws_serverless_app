@@ -12,30 +12,29 @@ def lambda_handler(event, context):
     print("EVENTO:", json.dumps(event)) 
 
     try:
-        # 1. Obtener datos del cuerpo
         body = json.loads(event['body'])
         
-        # --- CAMBIO AQUÍ ---
         description = body.get('description')
-        details = body.get('details', '') # Leemos 'details'. Si no viene, ponemos texto vacío.
-        # -------------------
+        details = body.get('details', '')
+        priority = body.get('priority', 'normal')
+        # NUEVO: Obtenemos la fecha de vencimiento
+        dueDate = body.get('dueDate', '') 
         
-        # 2. Obtener ID del usuario desde Cognito
         try:
             user_id = event['requestContext']['authorizer']['claims']['sub']
         except KeyError:
-            print("No se encontró usuario en authorizer, usando fallback")
             user_id = "usuario_desconocido"
 
-        # 3. Crear ítem
         task_id = str(uuid.uuid4())
         timestamp = datetime.datetime.now().isoformat()
         
         item = {
             'userId': user_id,
             'taskId': task_id,
-            'description': description, # Título
-            'details': details,         # <--- CAMBIO AQUÍ: Guardamos la descripción larga
+            'description': description,
+            'details': details,
+            'priority': priority,
+            'dueDate': dueDate,   # <--- GUARDAMOS LA FECHA
             'status': 'pending',
             'createdAt': timestamp
         }
@@ -49,7 +48,6 @@ def lambda_handler(event, context):
                 "Access-Control-Allow-Headers": "Content-Type,Authorization",
                 "Access-Control-Allow-Methods": "OPTIONS,POST"
             },
-            # Devolvemos el item completo para que el frontend pueda actualizarse rápido si quisiera
             "body": json.dumps({"message": "Tarea creada", "taskId": task_id, "item": item})
         }
 
