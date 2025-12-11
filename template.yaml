@@ -17,7 +17,7 @@ Globals:
       AllowOrigin: "'*'"
 
 Resources:
-  # --- 1. COGNITO (LA SEGURIDAD) ---
+  #COGNITO
   TodoUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -38,7 +38,7 @@ Resources:
         - ALLOW_REFRESH_TOKEN_AUTH
         - ALLOW_USER_PASSWORD_AUTH
 
-  # --- 2. API GATEWAY ---
+  # API GATEWAY
   ServerlessRestApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -48,7 +48,7 @@ Resources:
         Authorizers:
           MyCognitoAuthorizer:
             UserPoolArn: !Sub arn:aws:cognito-idp:us-east-1:${AWS::AccountId}:userpool/us-east-1_ce503fVpK
-  # --- 3. BASE DE DATOS ---
+  #BASE DE DATOS
   TasksTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -65,7 +65,7 @@ Resources:
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
 
-  # --- 4. FUNCIONES ---
+  # FUNCIONES
   CreateTaskFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -126,7 +126,7 @@ Resources:
             Method: delete
             RestApiId: !Ref ServerlessRestApi
 
-# --- 5. OUTPUTS (LO QUE NECESITAS COPIAR) ---
+# OUTPUTS
 Outputs:
   WebEndpoint:
     Description: "URL API"
