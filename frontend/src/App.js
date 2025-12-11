@@ -316,6 +316,7 @@ function Home({ user, signOut }) {
             <h3>🔴 Prioridad Alta ({highTasks.length})</h3>
             <div className="column-content">
               {highTasks.map(renderCard)}
+              {highTasks.length === 0 && <p className="empty-msg">Vacío</p>}
             </div>
           </div>
 
