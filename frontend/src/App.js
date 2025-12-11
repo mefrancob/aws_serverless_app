@@ -324,6 +324,7 @@ function Home({ user, signOut }) {
             <h3>🟡 Prioridad Normal ({normalTasks.length})</h3>
             <div className="column-content">
               {normalTasks.map(renderCard)}
+              {normalTasks.length === 0 && <p className="empty-msg">Vacío</p>}
             </div>
           </div>
 
@@ -331,6 +332,7 @@ function Home({ user, signOut }) {
             <h3>🟢 Prioridad Baja ({lowTasks.length})</h3>
             <div className="column-content">
               {lowTasks.map(renderCard)}
+              {lowTasks.length === 0 && <p className="empty-msg">Vacío</p>}
             </div>
           </div>
         </div>
