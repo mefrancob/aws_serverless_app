@@ -31,6 +31,10 @@ function Home({ user, signOut }) {
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState("");
   
+  // --- CAMBIO PAGINACIÓN: Estado para el token ---
+  const [nextToken, setNextToken] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+
   // ESTADOS DEL FORMULARIO
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
@@ -53,19 +57,52 @@ function Home({ user, signOut }) {
     };
   };
 
-  const fetchTasks = async () => {
+  // --- CAMBIO PAGINACIÓN: Función fetchTasks mejorada ---
+  // Ahora acepta un token opcional para cargar la siguiente página
+  const fetchTasks = async (tokenToLoad = null, append = false) => {
     const token = await getToken();
     if (!token) return;
+    
     try {
       const headers = await getAuthHeaders(token);
-      const response = await fetch(`${API_URL}/tasks`, { headers: { 'Authorization': headers.Authorization } });
+      
+      // Construimos la URL con parámetros de paginación
+      let url = `${API_URL}/tasks?limit=5`; // Traemos de 5 en 5
+      if (tokenToLoad) {
+        // Codificamos el token para que viaje seguro en la URL
+        url += `&nextToken=${encodeURIComponent(tokenToLoad)}`;
+      }
+
+      if (append) setLoadingMore(true);
+
+      const response = await fetch(url, { headers: { 'Authorization': headers.Authorization } });
+      
       if (response.ok) {
         const data = await response.json();
-        if (Array.isArray(data)) setTasks(data);
-        else if (data.body) setTasks(JSON.parse(data.body));
-        else if (data.Items) setTasks(data.Items);
+        
+        // Manejamos la respuesta nueva { tasks: [], nextToken: ... }
+        let newTasks = [];
+        let newNextToken = null;
+
+        if (data.tasks) {
+          newTasks = data.tasks;
+          newNextToken = data.nextToken;
+        } else if (Array.isArray(data)) {
+          // Soporte retroactivo por si la Lambda falla y envía array antiguo
+          newTasks = data;
+        }
+
+        // Si es "Cargar más", sumamos las tareas. Si es carga inicial, reemplazamos.
+        if (append) {
+          setTasks(prev => [...prev, ...newTasks]);
+        } else {
+          setTasks(newTasks);
+        }
+        
+        setNextToken(newNextToken);
       }
-    } catch (error) { console.error("Error", error); }
+    } catch (error) { console.error("Error fetching tasks", error); }
+    setLoadingMore(false);
   };
 
   const handleSubmit = async (e) => {
@@ -91,7 +128,8 @@ function Home({ user, signOut }) {
         setDetails("");
         setPriority("normal");
         setDueDate("");
-        await fetchTasks();
+        // Recargamos desde cero al crear una tarea nueva
+        await fetchTasks(); 
       }
     } catch (error) { console.error(error); }
     setLoading(false);
@@ -105,7 +143,8 @@ function Home({ user, signOut }) {
         method: 'DELETE',
         headers: { 'Authorization': headers.Authorization }
       });
-      fetchTasks();
+      // Filtramos localmente para no tener que recargar todo
+      setTasks(prev => prev.filter(t => t.taskId !== taskId));
     } catch (error) { console.error(error); }
   };
 
@@ -117,6 +156,7 @@ function Home({ user, signOut }) {
         headers: headers,
         body: JSON.stringify({ status: 'completed' })
       });
+      // Recargar todo para actualizar estado
       fetchTasks();
     } catch (error) { console.error(error); }
   };
@@ -128,6 +168,7 @@ function Home({ user, signOut }) {
         const name = attributes.preferred_username || user?.signInDetails?.loginId;
         setDisplayName(name);
       } catch (e) { console.log(e); }
+      // Carga inicial (sin token)
       fetchTasks();
     };
     loadData();
@@ -213,18 +254,17 @@ function Home({ user, signOut }) {
           <button onClick={signOut} className="btn-logout">Cerrar Sesión</button>
         </div>
         
-        {tasks.length > 0 && (
-          <div className="search-container">
+        {/* --- CAMBIO PAGINACIÓN: Solo mostrar búsqueda si hay tareas cargadas --- */}
+        <div className="search-container">
             <span className="search-icon">🔍</span>
             <input 
               type="text" 
-              placeholder="Buscar tarea..." 
+              placeholder="Buscar en tareas cargadas..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
-          </div>
-        )}
+        </div>
 
         <h1>Lista de Tareas</h1>
         
@@ -245,7 +285,6 @@ function Home({ user, signOut }) {
               className="input-details"
             />
             
-            {/* FECHA Y LUEGO PRIORIDAD (Apilados) */}
             <input 
               type="date"
               value={dueDate}
@@ -277,7 +316,6 @@ function Home({ user, signOut }) {
             <h3>🔴 Prioridad Alta ({highTasks.length})</h3>
             <div className="column-content">
               {highTasks.map(renderCard)}
-              {highTasks.length === 0 && <p className="empty-msg">Nada urgente 🙌</p>}
             </div>
           </div>
 
@@ -285,7 +323,6 @@ function Home({ user, signOut }) {
             <h3>🟡 Prioridad Normal ({normalTasks.length})</h3>
             <div className="column-content">
               {normalTasks.map(renderCard)}
-              {normalTasks.length === 0 && <p className="empty-msg">Vacío</p>}
             </div>
           </div>
 
@@ -293,10 +330,23 @@ function Home({ user, signOut }) {
             <h3>🟢 Prioridad Baja ({lowTasks.length})</h3>
             <div className="column-content">
               {lowTasks.map(renderCard)}
-              {lowTasks.length === 0 && <p className="empty-msg">Vacío</p>}
             </div>
           </div>
         </div>
+
+        {/* --- CAMBIO PAGINACIÓN: Botón "Cargar Más" --- */}
+        {nextToken && (
+          <div className="load-more-container" style={{ marginTop: '20px', paddingBottom: '40px' }}>
+            <button 
+              onClick={() => fetchTasks(nextToken, true)} 
+              className="btn-add" 
+              style={{ backgroundColor: '#2196F3', width: '200px' }}
+              disabled={loadingMore}
+            >
+              {loadingMore ? 'Cargando...' : '⬇️ Cargar más tareas'}
+            </button>
+          </div>
+        )}
 
       </header>
     </div>
