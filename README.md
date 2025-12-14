@@ -40,18 +40,6 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
 <p align="center">
   <img src="docs/images/AWSCloudArchitecture.jpg" alt="Diagrama de Arquitectura" width="80%">
 </p> 
-## 📡 Referencia de API
-
-La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
-
-| Método | Endpoint | Descripción | Requiere Auth |
-| :--- | :--- | :--- | :---: |
-| `GET` | `/tasks` | Obtiene la lista de tareas (soporta `?limit=10&next=...` para paginación). | ✅ |
-| `POST` | `/tasks` | Crea una nueva tarea. Body: `{ title, description, priority }`. | ✅ |
-| `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
-| `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
-| `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
-
 
 ## 📡 Referencia de API
 
