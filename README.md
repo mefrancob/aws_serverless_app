@@ -46,7 +46,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 <p align="center">
   <img src="docs/images/prioridad.png" width="90%" alt="Prioridades">
   <br>
-  <em>Organización visual de tareas (Alta, Media, Baja)</em>
+  <em>Organización visual de tareas (Alta, Normal, Baja)</em>
 </p>
 
 ## Arquitectura Tecnológica
