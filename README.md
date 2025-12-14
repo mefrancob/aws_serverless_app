@@ -9,6 +9,15 @@ Proyecto final para el curso de Computación en la Nube. El objetivo es diseñar
 ## Descripción del Proyecto
 Esta aplicación permite a los usuarios registrarse, iniciar sesión de forma segura y gestionar sus propias listas de tareas. Cada usuario tiene acceso únicamente a sus datos, garantizando la privacidad y el aislamiento. El proyecto abarca todo el ciclo de vida del desarrollo de software en la nube, desde el diseño de la arquitectura y la implementación del frontend y backend, hasta el despliegue automatizado y la configuración de buenas prácticas de seguridad y monitoreo.
 El enfoque principal es demostrar la eficiencia, escalabilidad y rentabilidad de las arquitecturas serverless para construir aplicaciones web modernas.
+## ✨ Funcionalidades Clave
+
+Más allá de un CRUD básico, esta aplicación implementa patrones de diseño avanzados:
+
+- **🔐 Autenticación Robusta:** Registro, Login y Recuperación de contraseña con Amazon Cognito (MFA opcional).
+- **🔎 Búsqueda Full-Text:** Sistema de búsqueda inteligente para localizar tareas por título o descripción en tiempo real.
+- **📄 Paginación Eficiente:** Manejo de grandes volúmenes de datos cargando tareas por segmentos para optimizar la latencia y el consumo de red.
+- **🏷️ Clasificación por Prioridad:** Organización visual de tareas (Alta, Media, Baja) para gestión efectiva del tiempo.
+- **⚡ Rendimiento Optimizado:** Uso de CloudFront como CDN para entregar la interfaz en milisegundos a nivel global.
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
 ### Stack Tecnológico
@@ -28,11 +37,47 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
 - **Base de Datos:**
     - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
 ### Diagrama de arquitectura
+## 📡 Referencia de API
+
+La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
+
+| Método | Endpoint | Descripción | Requiere Auth |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/tasks` | Obtiene la lista de tareas (soporta `?limit=10&next=...` para paginación). | ✅ |
+| `POST` | `/tasks` | Crea una nueva tarea. Body: `{ title, description, priority }`. | ✅ |
+| `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
+| `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
+| `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
 
 <p align="center">
   <img src="docs/images/AWSCloudArchitecture.jpg" alt="Diagrama de Arquitectura" width="80%">
 </p> 
+## 📡 Referencia de API
 
+La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
+
+| Método | Endpoint | Descripción | Requiere Auth |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/tasks` | Obtiene la lista de tareas (soporta `?limit=10&next=...` para paginación). | ✅ |
+| `POST` | `/tasks` | Crea una nueva tarea. Body: `{ title, description, priority }`. | ✅ |
+| `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
+| `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
+| `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
+---
+
+### 5. Retos Técnicos y Decisiones (Technical Highlights) 🧠
+*Dónde ponerla: Al final, antes de los Autores.*
+
+Aquí explicas **CÓMO** lograste lo difícil. Esto enamora a los evaluadores técnicos.
+
+```markdown
+## 🧠 Decisiones Técnicas y Retos
+
+### Implementación de Búsqueda
+Para lograr la búsqueda de texto sin levantar servidores costosos como OpenSearch, implementamos [Explica aquí tu solución, ej: un filtro en Lambda o DynamoDB Streams]. Esto mantuvo el costo bajo sin sacrificar la funcionalidad.
+
+### Estrategia de Paginación
+En lugar de traer todas las tareas (que sería lento y costoso), implementamos paginación basada en cursor (`LastEvaluatedKey` de DynamoDB), lo que garantiza tiempos de respuesta constantes sin importar si el usuario tiene 10 o 10,000 tareas.
 ## Autores
 
 - **Melissa Franco Bernal** - [GitHub: mefrancob](https://github.com/mefrancob)

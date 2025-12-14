@@ -15,7 +15,7 @@ Amplify.configure({
   }
 });
 
-const API_URL = "https://cwaai6k6pi.execute-api.us-east-1.amazonaws.com/Prod";
+const API_URL = process.env.REACT_APP_API_URL;
 
 const formFields = {
   signUp: {
