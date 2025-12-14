@@ -37,18 +37,6 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
 - **Base de Datos:**
     - **Amazon DynamoDB:** Base de datos NoSQL, serverless y de alto rendimiento.
 ### Diagrama de arquitectura
-## 📡 Referencia de API
-
-La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
-
-| Método | Endpoint | Descripción | Requiere Auth |
-| :--- | :--- | :--- | :---: |
-| `GET` | `/tasks` | Obtiene la lista de tareas (soporta `?limit=10&next=...` para paginación). | ✅ |
-| `POST` | `/tasks` | Crea una nueva tarea. Body: `{ title, description, priority }`. | ✅ |
-| `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
-| `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
-| `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
-
 <p align="center">
   <img src="docs/images/AWSCloudArchitecture.jpg" alt="Diagrama de Arquitectura" width="80%">
 </p> 
@@ -63,14 +51,21 @@ La comunicación entre el Frontend y el Backend se realiza a través de una API 
 | `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
 | `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
 | `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
+
+
+## 📡 Referencia de API
+
+La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
+
+| Método | Endpoint | Descripción | Requiere Auth |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/tasks` | Obtiene la lista de tareas (soporta `?limit=10&next=...` para paginación). | ✅ |
+| `POST` | `/tasks` | Crea una nueva tarea. Body: `{ title, description, priority }`. | ✅ |
+| `GET` | `/search` | Busca tareas. Ejemplo: `/search?q=comprar`. | ✅ |
+| `PUT` | `/tasks/{id}` | Actualiza el estado o contenido de una tarea específica. | ✅ |
+| `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
 ---
 
-### 5. Retos Técnicos y Decisiones (Technical Highlights) 🧠
-*Dónde ponerla: Al final, antes de los Autores.*
-
-Aquí explicas **CÓMO** lograste lo difícil. Esto enamora a los evaluadores técnicos.
-
-```markdown
 ## 🧠 Decisiones Técnicas y Retos
 
 ### Implementación de Búsqueda
@@ -78,6 +73,7 @@ Para lograr la búsqueda de texto sin levantar servidores costosos como OpenSear
 
 ### Estrategia de Paginación
 En lugar de traer todas las tareas (que sería lento y costoso), implementamos paginación basada en cursor (`LastEvaluatedKey` de DynamoDB), lo que garantiza tiempos de respuesta constantes sin importar si el usuario tiene 10 o 10,000 tareas.
+
 ## Autores
 
 - **Melissa Franco Bernal** - [GitHub: mefrancob](https://github.com/mefrancob)
