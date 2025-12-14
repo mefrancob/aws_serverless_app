@@ -9,7 +9,7 @@ Proyecto final para el curso de Computación en la Nube. El objetivo es diseñar
 ## Descripción del Proyecto
 Esta aplicación permite a los usuarios registrarse, iniciar sesión de forma segura y gestionar sus propias listas de tareas. Cada usuario tiene acceso únicamente a sus datos, garantizando la privacidad y el aislamiento. El proyecto abarca todo el ciclo de vida del desarrollo de software en la nube, desde el diseño de la arquitectura y la implementación del frontend y backend, hasta el despliegue automatizado y la configuración de buenas prácticas de seguridad y monitoreo.
 El enfoque principal es demostrar la eficiencia, escalabilidad y rentabilidad de las arquitecturas serverless para construir aplicaciones web modernas.
-## ✨ Funcionalidades Clave
+## Funcionalidades Clave
 
 Más allá de un CRUD básico, esta aplicación implementa patrones de diseño avanzados:
 
@@ -41,7 +41,7 @@ La solución se basa en un stack tecnológico serverless nativo de AWS, desacopl
   <img src="docs/images/AWSCloudArchitecture.jpg" alt="Diagrama de Arquitectura" width="80%">
 </p> 
 
-## 📡 Referencia de API
+## Referencia de API
 
 La comunicación entre el Frontend y el Backend se realiza a través de una API REST protegida.
 
@@ -54,7 +54,7 @@ La comunicación entre el Frontend y el Backend se realiza a través de una API 
 | `DELETE`| `/tasks/{id}` | Elimina una tarea permanentemente. | ✅ |
 ---
 
-## 🧠 Decisiones Técnicas y Retos
+## Decisiones Técnicas y Retos
 
 ### Implementación de Búsqueda
 Para lograr la búsqueda de texto sin levantar servidores costosos como OpenSearch, implementamos [Explica aquí tu solución, ej: un filtro en Lambda o DynamoDB Streams]. Esto mantuvo el costo bajo sin sacrificar la funcionalidad.
