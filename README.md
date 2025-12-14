@@ -18,12 +18,23 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 - **📄 Paginación Eficiente:** Manejo de grandes volúmenes de datos cargando tareas por segmentos para optimizar la latencia y el consumo de red.
 - **🏷️ Clasificación por Prioridad:** Organización visual de tareas (Alta, Media, Baja) para gestión efectiva del tiempo.
 - **⚡ Rendimiento Optimizado:** Uso de CloudFront como CDN para entregar la interfaz en milisegundos a nivel global.
-## Galería
 
-| 🏠 Dashboard Principal | 🔍 Búsqueda en Tiempo Real | ⚡ Clasificación por Prioridad |
-|:---:|:---:|:---:|
-| ![Vista del Dashboard](docs/images/dashboard.png) | ![Barra de Búsqueda](docs/images/search.png) | ![Filtros de Prioridad](docs/images/prioridad.png) |
-| *Vista general de tareas* | *Filtrado instantáneo* | *Organización visual* |
+## Galería
+<!-- Fila 1: Imagen Principal Grande -->
+<h3 align="center">🏠 Dashboard Principal</h3>
+<p align="center">
+  <img src="docs/images/dashboard.png" width="90%" alt="Dashboard Principal">
+  <br>
+  <em>Vista general de la gestión de tareas</em>
+</p>
+
+<br>
+
+<!-- Fila 2: Dos columnas para detalles -->
+| ⚡ Clasificación por Prioridad | 🔍 Búsqueda Inteligente |
+|:---:|:---:|
+| <img src="docs/images/prioridades.png" width="100%"> | <img src="docs/images/busqueda.png" width="100%"> |
+| *Organización visual por colores* | *Filtrado en tiempo real* |
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
 ### Stack Tecnológico
