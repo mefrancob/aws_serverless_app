@@ -33,7 +33,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 <!-- Fila 2: Dos columnas para detalles -->
 | ⚡ Clasificación por Prioridad | 🔍 Búsqueda Inteligente |
 |:---:|:---:|
-| <img src="docs/images/prioridades.png" width="100%"> | <img src="docs/images/busqueda.png" width="100%"> |
+| <img src="docs/images/prioridad.png" width="100%"> | <img src="docs/images/search.png" width="100%"> |
 | *Organización visual por colores* | *Filtrado en tiempo real* |
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
