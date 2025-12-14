@@ -22,7 +22,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 
 | 🏠 Dashboard Principal | 🔍 Búsqueda en Tiempo Real | ⚡ Clasificación por Prioridad |
 |:---:|:---:|:---:|
-| ![Vista del Dashboard](assets/images/dashboard.png) | ![Barra de Búsqueda](assets/images/search.png) | ![Filtros de Prioridad](assets/images/prioridad.png) |
+| ![Vista del Dashboard](docs/images/dashboard.png) | ![Barra de Búsqueda](docs/images/search.png) | ![Filtros de Prioridad](docs/images/prioridad.png) |
 | *Vista general de tareas* | *Filtrado instantáneo* | *Organización visual* |
 ## Arquitectura Tecnológica
 La solución se basa en un stack tecnológico serverless nativo de AWS, desacoplando el frontend del backend para maximizar la flexibilidad y la escalabilidad.
