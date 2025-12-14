@@ -313,7 +313,7 @@ function Home({ user, signOut }) {
 
         <div className="kanban-board">
           <div className="kanban-column col-high">
-            <h3>🔴 Alta ({highTasks.length})</h3>
+            <h3>🔴 Prioridad Alta ({highTasks.length})</h3>
             <div className="column-content">
               {highTasks.map(renderCard)}
               {highTasks.length === 0 && <p className="empty-msg">Vacío</p>}
@@ -321,7 +321,7 @@ function Home({ user, signOut }) {
           </div>
 
           <div className="kanban-column col-normal">
-            <h3>🟡 Normal ({normalTasks.length})</h3>
+            <h3>🟡 Prioridad Normal ({normalTasks.length})</h3>
             <div className="column-content">
               {normalTasks.map(renderCard)}
               {normalTasks.length === 0 && <p className="empty-msg">Vacío</p>}
@@ -329,7 +329,7 @@ function Home({ user, signOut }) {
           </div>
 
           <div className="kanban-column col-low">
-            <h3>🟢 Baja ({lowTasks.length})</h3>
+            <h3>🟢 Prioridad Baja ({lowTasks.length})</h3>
             <div className="column-content">
               {lowTasks.map(renderCard)}
               {lowTasks.length === 0 && <p className="empty-msg">Vacío</p>}
