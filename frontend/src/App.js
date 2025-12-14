@@ -313,7 +313,7 @@ function Home({ user, signOut }) {
 
         <div className="kanban-board">
           <div className="kanban-column col-high">
-            <h3>🔴 Prioridad Alta ({highTasks.length})</h3>
+            <h3>🔴 Priorida Alta ({highTasks.length})</h3>
             <div className="column-content">
               {highTasks.map(renderCard)}
               {highTasks.length === 0 && <p className="empty-msg">Vacío</p>}
