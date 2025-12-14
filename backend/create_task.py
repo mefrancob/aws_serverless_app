@@ -17,7 +17,7 @@ def lambda_handler(event, context):
         description = body.get('description')
         details = body.get('details', '')
         priority = body.get('priority', 'normal')
-        # NUEVO: Obtenemos la fecha de vencimiento
+        #Obtención de la fecha de vencimiento
         dueDate = body.get('dueDate', '') 
         
         try:
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             'description': description,
             'details': details,
             'priority': priority,
-            'dueDate': dueDate,   # <--- GUARDAMOS LA FECHA
+            'dueDate': dueDate,  
             'status': 'pending',
             'createdAt': timestamp
         }

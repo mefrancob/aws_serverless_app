@@ -11,7 +11,6 @@ def lambda_handler(event, context):
         # Obtener el ID de la tarea desde la URL (pathParameters)
         task_id = event['pathParameters']['taskId']
         
-        # Por ahora usamos el usuario demo (luego lo cambiaremos por el real)
         user_id = event['requestContext']['authorizer']['claims']['sub']
         # Actualizar el estado en DynamoDB
         response = table.update_item(
