@@ -22,7 +22,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 ## Galería
 
 <!-- IMAGEN 1 -->
-<h3 align="center">🏠 Dashboard Principal</h3>
+<h3 align="center"> Dashboard Principal</h3>
 <p align="center">
   <img src="docs/images/dashboard.png" width="90%" alt="Dashboard Principal">
   <br>
@@ -32,7 +32,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 <br> <!-- Espacio -->
 
 <!-- IMAGEN 2 -->
-<h3 align="center">🔍 Búsqueda en Tiempo Real</h3>
+<h3 align="center"> Búsqueda en Tiempo Real</h3>
 <p align="center">
   <img src="docs/images/search.png" width="90%" alt="Búsqueda">
   <br>
@@ -42,7 +42,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 <br> <!-- Espacio -->
 
 <!-- IMAGEN 3 -->
-<h3 align="center">⚡ Clasificación por Prioridad</h3>
+<h3 align="center"> Clasificación por Prioridad</h3>
 <p align="center">
   <img src="docs/images/prioridad.png" width="90%" alt="Prioridades">
   <br>
