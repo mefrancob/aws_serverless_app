@@ -34,7 +34,7 @@ Más allá de un CRUD básico, esta aplicación implementa patrones de diseño a
 <!-- IMAGEN 2 -->
 <h3 align="center">🔍 Búsqueda en Tiempo Real</h3>
 <p align="center">
-  <img src="assets/images/search.png" width="90%" alt="Búsqueda">
+  <img src="docs/images/search.png" width="90%" alt="Búsqueda">
   <br>
   <em>Filtrado instantáneo de tareas sin recargar la página</em>
 </p>
